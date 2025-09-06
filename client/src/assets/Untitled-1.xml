@@ -1,0 +1,13 @@
+<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="320" height="80" rx="20" fill="#181A20"/>
+  <g>
+    <ellipse cx="50" cy="40" rx="28" ry="26" fill="#FF6600"/>
+    <rect x="36" y="32" width="28" height="16" rx="8" fill="#fff"/>
+    <circle cx="46" cy="40" r="2" fill="#FF6600"/>
+    <circle cx="54" cy="40" r="2" fill="#FF6600"/>
+    <circle cx="62" cy="40" r="2" fill="#FF6600"/>
+    <path d="M50 26 v-6 a6 6 0 0 1 12 0 v6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="90" y="52" font-family="Outfit, Arial, sans-serif" font-size="38" fill="#fff" font-weight="bold">crypt</text>
+  <text x="190" y="52" font-family="Outfit, Arial, sans-serif" font-size="38" fill="#FF6600" font-weight="bold">Chat</text>
+</svg>
