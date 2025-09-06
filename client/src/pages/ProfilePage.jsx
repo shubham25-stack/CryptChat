@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ Added
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import assets from '../assets/assets';
+import { AuthContext } from '../contexts/AuthContext';
 
 const ProfilePage = () => {
+
+  
+
+  const { authUser, updateProfile } = useContext(AuthContext);
   const [selectedImg, setSelectedImg] = useState(null);
   const navigate = useNavigate();
-  const [name, setName] = useState("Martin Johnson");
-  const [bio, setBio] = useState("Hi everyone I'm using quickchat");
+  const [name, setName] = useState(authUser?.fullName || '');
+  const [bio, setBio] = useState(authUser?.bio || '');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/');
+    let success = false;
+    if (!selectedImg) {
+      success = await updateProfile({ fullname: name, bio });
+      // updateProfile returns undefined, so check for errors via toast or improve context API for real error handling
+      if (success !== false) navigate('/');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImg);
+    reader.onload = async () => {
+      const base64Img = reader.result;
+      success = await updateProfile({ profilePic: base64Img, fullname: name, bio });
+      if (success !== false) navigate('/');
+    };
   };
 
   return (
@@ -28,9 +47,15 @@ const ProfilePage = () => {
               hidden
             />
             <img
-              src={selectedImg ? URL.createObjectURL(selectedImg) : assets.avtar_icon}
+              src={
+                selectedImg
+                  ? URL.createObjectURL(selectedImg)
+                  : authUser?.profilePic
+                    ? authUser.profilePic
+                    : assets.avatar_icon
+              }
               alt=""
-              className={`w-12 h-12 ${selectedImg && 'rounded-full'}`}
+              className={`w-12 h-12 rounded-full`}
             />
             Upload profile image
           </label>
@@ -63,7 +88,7 @@ const ProfilePage = () => {
 
         <img
           className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10'
-          src={assets.logo_icon}
+          src={authUser?.profilePic || assets.logo_icon}
           alt=""
         />
       </div>

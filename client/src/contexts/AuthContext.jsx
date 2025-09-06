@@ -21,8 +21,13 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         setAuthUser(data.user);
         connectSocket(data.user);
+      } else {
+        // If backend responds but not successful, logout
+        logout();
       }
     } catch (error) {
+      // If 404 or 403, logout
+      logout();
       toast.error(error.response?.data?.message || error.message);
     }
   };
@@ -95,13 +100,15 @@ export const AuthProvider = ({ children }) => {
     setSocket(newSocket);
   };
 
-  // ✅ Run auth check on mount & token change
+  // ✅ Run auth check on mount (not after login/signup)
   useEffect(() => {
-    if (token) {
+    // Only run checkAuth on initial mount if token exists
+    if (token && !authUser) {
       axios.defaults.headers.common["token"] = token;
       checkAuth();
     }
-  }, [token]);
+    // eslint-disable-next-line
+  }, []);
 
   const value = {
     axios,

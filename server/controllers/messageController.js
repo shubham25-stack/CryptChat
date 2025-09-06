@@ -3,35 +3,35 @@ import Message from "../models/message.js";
 import { io, userSocketMap } from "../server.js";
 import cloudinary from "cloudinary";
 
-// get all users except logged-in user
+// ---------------- Get all users except logged-in user ----------------
 export const getUserForSidebar = async (req, res) => {
     try {
         const userId = req.user._id;
+
+        // Fetch users except logged-in one
         const filteredUsers = await User.find({ _id: { $ne: userId } }).select("-password");
 
-        // count number of messages not seen
+        // Count unseen messages for each user
         const unseenMessages = {};
-        const promises = filteredUsers.map(async (user) => {
-            const messages = await Message.find({
-                senderId: user._id,
-                receiverId: userId,
-                seen: false,
-            });
-            if (messages.length > 0) {
-                unseenMessages[user._id] = messages.length;
-            }
-        });
+        await Promise.all(
+            filteredUsers.map(async (user) => {
+                const count = await Message.countDocuments({
+                    senderId: user._id,
+                    receiverId: userId,
+                    seen: false,
+                });
+                if (count > 0) unseenMessages[user._id] = count;
+            })
+        );
 
-        await Promise.all(promises);
-
-        res.json({ success: true, users: filteredUsers, unseenMessages });
+        return res.json({ success: true, users: filteredUsers, unseenMessages });
     } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message });
+        console.error("❌ getUserForSidebar error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error" });
     }
 };
 
-// get all messages of selected user
+// ---------------- Get messages of selected user ----------------
 export const getMessages = async (req, res) => {
     try {
         const { id: selectedUserId } = req.params;
@@ -44,20 +44,20 @@ export const getMessages = async (req, res) => {
             ],
         }).sort({ createdAt: 1 });
 
-        // mark messages as seen
+        // Mark messages as seen
         await Message.updateMany(
             { senderId: selectedUserId, receiverId: myId, seen: false },
             { $set: { seen: true } }
         );
 
-        res.json({ success: true, messages });
+        return res.json({ success: true, messages });
     } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message });
+        console.error("❌ getMessages error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error" });
     }
 };
 
-// api to mark all messages as seen for a conversation
+// ---------------- Mark all messages from a sender as seen ----------------
 export const markMessagesAsSeen = async (req, res) => {
     try {
         const { id: senderId } = req.params;
@@ -68,14 +68,14 @@ export const markMessagesAsSeen = async (req, res) => {
             { $set: { seen: true } }
         );
 
-        res.json({ success: true });
+        return res.json({ success: true });
     } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message });
+        console.error("❌ markMessagesAsSeen error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error" });
     }
 };
 
-// controller to send message to selected user
+// ---------------- Send a message ----------------
 export const sendMessage = async (req, res) => {
     try {
         const { text, image } = req.body;
@@ -90,23 +90,22 @@ export const sendMessage = async (req, res) => {
             imageUrl = uploadResponse.secure_url;
         }
 
-        const newMessage = new Message({
+        const newMessage = await Message.create({
             senderId,
             receiverId,
             text,
             image: imageUrl,
         });
-        await newMessage.save();
 
-        // emit the new message to the receiver's socket
+        // Emit the new message to receiver if online
         const receiverSocketId = userSocketMap[receiverId];
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
 
-        res.json({ success: true, newMessage });
+        return res.json({ success: true, newMessage });
     } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message });
+        console.error("❌ sendMessage error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error" });
     }
 };

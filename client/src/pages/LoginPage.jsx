@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
 import { AuthContext } from "../contexts/AuthContext";
+import { io } from "socket.io-client";
 
 const LoginPage = () => {
   
@@ -10,19 +11,40 @@ const LoginPage = () => {
   const [password, setPassword] = useState("")
   const [bio, setBio] = useState("")
   const [isDataSubmited, setisDataSubmited] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {login} = useContext(AuthContext);
 
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
 
-    if (currState === "Sign up" && !isDataSubmited) {
-      setisDataSubmited(true)
+const onSubmitHandler = async (event) => {
+  event.preventDefault();
+  if (isSubmitting) return;
+
+  // Step 1: Show bio field for signup
+  if (currState === "Sign up" && !isDataSubmited) {
+    if (!fullName || !email || !password) {
+      alert("Please fill all required fields");
       return;
     }
-    login(currState === "Sign up" ? 'signup' : 'login',{fullName,email,password,bio})
-    
+    setisDataSubmited(true);
+    return;
   }
+
+  setIsSubmitting(true);
+  try {
+    await login(currState === "Sign up" ? "signup" : "login", {
+      fullname: fullName,
+      email,
+      password,
+      bio
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
+
 
   return (
     <div className='min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
@@ -92,8 +114,10 @@ const LoginPage = () => {
         {/* Submit button */}
         <button 
           type='submit' 
-          className='py-3 bg-gradient-to-r from-orange-700 to-orange-600 text-white rounded-md cursor-pointer'>
-          {currState === "Sign up" ? "Create Account" : "Login Now"}
+          className={`py-3 bg-gradient-to-r from-orange-700 to-orange-600 text-white rounded-md cursor-pointer ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Please wait...' : (currState === "Sign up" ? "Create Account" : "Login Now")}
         </button>
 
         <div className='flex items-center gap-2 text-sm text-gray-200'>
