@@ -7,3 +7,7 @@
 ::-webkit-scrollbar{
    display: none;
 }
+
+.your-class {
+  background-image: url('/bgImage.jpg');
+}
