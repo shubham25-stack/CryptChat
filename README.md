@@ -9,7 +9,7 @@ CryptChat is a modern, secure, and real-time chat application built with React, 
 - Online/offline user status
 - Unread message badges
 - Responsive design (desktop & mobile)
-- Modern UI with Tailwind CSS
+- Modern UI with Tailwind CSS  
 
 ## Tech Stack
 - **Frontend:** React, Vite, Tailwind CSS, Axios, React Router, React Hot Toast
