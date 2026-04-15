@@ -1,5 +1,6 @@
 import React from 'react'
 import assets from '../assets/assets'
+import Logo from './Logo'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
@@ -28,7 +29,7 @@ const Sidebar = () => {
       {/* Top Section */}
       <div className='pb-5'>
         <div className='flex justify-between items-center'>
-          <img src={assets.logo} alt="logo" className='max-w-40' />
+          <Logo name="CryptChat" size={36} className='max-w-40' />
           <div className="relative py-2 group">
             <img src={assets.menu_icon} alt="menu_icon" className='max-h-5 cursor-pointer' />
             <div className='absolute top-full right-0 z-20 w-32 p-5 rounded-md bg-[#1f1a17] border border-orange-500/40 text-gray-100 hidden group-hover:block'>

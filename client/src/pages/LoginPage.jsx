@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
+import Logo from '../components/Logo'
 import { AuthContext } from "../contexts/AuthContext";
 import { io } from "socket.io-client";
 
@@ -50,7 +51,9 @@ const onSubmitHandler = async (event) => {
     <div className='min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
       
       {/* Left Side */}
-      <img src={assets.logo_big} alt="Logo" className='w-[min(30vw,250px)]' />
+      <div className='hidden sm:block'>
+        <Logo name="CryptChat" size={200} />
+      </div>
 
       {/* Right Side */}
       <form onSubmit={onSubmitHandler}
