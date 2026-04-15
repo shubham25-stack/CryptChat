@@ -100,10 +100,18 @@ export const sendMessage = async (req, res) => {
         // Emit the new message to receiver if online
         const receiverSocketId = userSocketMap[receiverId];
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage);
+            // send a plain JS object with string IDs to avoid type mismatches on client
+            const payload = newMessage.toObject ? newMessage.toObject() : newMessage;
+            payload.senderId = String(payload.senderId);
+            payload.receiverId = String(payload.receiverId);
+            io.to(receiverSocketId).emit("newMessage", payload);
         }
 
-        return res.json({ success: true, newMessage });
+        // normalize returned message object (string ids)
+        const returned = newMessage.toObject ? newMessage.toObject() : newMessage;
+        returned.senderId = String(returned.senderId);
+        returned.receiverId = String(returned.receiverId);
+        return res.json({ success: true, newMessage: returned });
     } catch (error) {
         console.error("❌ sendMessage error:", error.message);
         return res.status(500).json({ success: false, message: "Server error" });

@@ -6,7 +6,7 @@ import { ChatContext } from "../contexts/ChatContext";
 import { AuthContext } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 
-const ChatContainer = () => {
+const ChatContainer = ({ onOpenDetailsMobile }) => {
   const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } =
     useContext(ChatContext);
   const { authUser, onlineUsers } = useContext(AuthContext);
@@ -57,23 +57,34 @@ const ChatContainer = () => {
       <div className="flex items-center justify-between py-3 px-4 border-b border-orange-500/50">
         {/* Left Side */}
         <div className="flex items-center gap-3">
-          <img
-            src={selectedUser.profilePic || assets.avatar_icon}
-            alt="Profile"
-            className="w-8 rounded-full"
-          />
-          <p className="text-white flex items-center gap-2">
-            {selectedUser.fullname}
-            {onlineUsers?.includes(selectedUser._id) && (
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>
-            )}
-          </p>
+          {/* Back arrow placed left; always navigates back */}
           <img
             onClick={() => setSelectedUser(null)}
             src={assets.arrow_icon}
             alt="Back"
-            className="md:hidden w-5 cursor-pointer"
+            className="md:hidden w-5 cursor-pointer mr-1"
           />
+
+          {/* Clickable area between arrow and name opens details overlay on mobile */}
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => { if (typeof onOpenDetailsMobile === 'function') onOpenDetailsMobile(); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') { if (typeof onOpenDetailsMobile === 'function') onOpenDetailsMobile(); } }}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <img
+              src={selectedUser.profilePic || assets.avatar_icon}
+              alt="Profile"
+              className="w-8 rounded-full"
+            />
+            <p className="text-white flex items-center gap-2">
+              {selectedUser.fullname}
+              {onlineUsers?.includes(selectedUser._id) && (
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* Right Side */}
@@ -149,7 +160,7 @@ const ChatContainer = () => {
       </div>
 
       {/* Bottom Input */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3">
+      <div className="sticky bottom-0 left-0 right-0 flex items-center gap-3 p-3 bg-black/20 backdrop-blur-sm z-20">
         <div className="flex-1 flex items-center bg-white/10 px-3 rounded-full border border-orange-500/30">
           <input
             onChange={(e) => setInput(e.target.value)}
@@ -176,12 +187,13 @@ const ChatContainer = () => {
             />
           </label>
         </div>
-        <img
+        <button
           onClick={(e) => handleSendMessage(e)}
-          src={assets.send_button}
-          alt="Send"
-          className="w-7 cursor-pointer bg-gradient-to-r from-orange-600 to-orange-500 rounded-full p-1"
-        />
+          aria-label="Send message"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-600 to-orange-500"
+        >
+          <img src={assets.send_button} alt="Send" className="w-5" />
+        </button>
       </div>
     </div>
   ) : (
