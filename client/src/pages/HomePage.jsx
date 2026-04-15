@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import ChatContainer from '../components/ChatContainer'
 import Sidebar from '../components/Sidebar'
 import RightSidebar from '../components/RightSidebar'
@@ -6,6 +6,7 @@ import { ChatContext } from '../contexts/ChatContext'
 
 const HomePage = () => {
   const { selectedUser } = useContext(ChatContext);
+  const [showDetailsMobile, setShowDetailsMobile] = useState(false);
 
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
@@ -17,9 +18,9 @@ const HomePage = () => {
         }`}
       >
         <Sidebar />
-        <ChatContainer />
-        {/* ✅ Pass selectedUser */}
-        <RightSidebar selectedUser={selectedUser} />
+        <ChatContainer onOpenDetailsMobile={() => setShowDetailsMobile(true)} />
+        {/* ✅ Pass selectedUser and mobile overlay control */}
+        <RightSidebar selectedUser={selectedUser} mobileOpen={showDetailsMobile} onClose={() => setShowDetailsMobile(false)} />
       </div>
     </div>
   )

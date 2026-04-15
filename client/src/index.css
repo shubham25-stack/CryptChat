@@ -12,6 +12,7 @@
   background-image: url('/bgImage.jpg');
 }
 
+/* Ensure ch
 /* Ensure chat content isn't hidden behind the input on small screens */
 .chat-main {
   padding-bottom: 88px;
@@ -25,6 +26,11 @@
 
 @media (max-width: 768px){
   .chat-main { padding-bottom: 104px; }
+}
+
+/* Give a bit more bottom padding on very small screens */
+@media (max-width: 420px) {
+  .chat-main { padding-bottom: 130px; }
 }
 
 /* Fallback utilities for 'max-sm' and 'max-md' classnames used in markup

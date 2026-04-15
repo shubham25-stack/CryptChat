@@ -59,27 +59,32 @@ export const ChatProvider = ({ children }) => {
   const subscribeToMessages = () => {
     if (!socket) return;
 
-    socket.on("newMessage", (newMessage) => {
-      if (selectedUser && newMessage.senderId === selectedUser._id) {
+    const handleNewMessage = (newMessage) => {
+      const senderId = String(newMessage.senderId);
+      const selectedId = selectedUser ? String(selectedUser._id) : null;
+
+      if (selectedId && senderId === selectedId) {
+        // mark seen locally and append
         newMessage.seen = true;
         setMessages((prev) => [...prev, newMessage]);
 
-        // Mark message as seen in DB
-        axios.put(`/api/messages/mark/${newMessage._id}`);
-      setUnseenMessages((prev) => ({
-        ...prev,
-        [newMessage.senderId]: 0,
-      }));
-    } else {
-      // Increment unseen count if chat is not open
-      setUnseenMessages((prev) => ({
-        ...prev,
-        [newMessage.senderId]: prev[newMessage.senderId]
-          ? prev[newMessage.senderId] + 1
-          : 1,
+        // Mark messages from this sender as seen in DB (use senderId)
+        axios.put(`/api/messages/mark/${senderId}`).catch(() => {});
+
+        setUnseenMessages((prev) => ({
+          ...prev,
+          [senderId]: 0,
+        }));
+      } else {
+        // Increment unseen count if chat is not open
+        setUnseenMessages((prev) => ({
+          ...prev,
+          [senderId]: prev[senderId] ? prev[senderId] + 1 : 1,
         }));
       }
-    });
+    };
+
+    socket.on("newMessage", handleNewMessage);
   };
 
   // ✅ Unsubscribe from socket
