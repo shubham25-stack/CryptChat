@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, 'feat/*', 'fix/*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  server-tests:
+    name: Server tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache server node_modules
+        uses: actions/cache@v4
+        with:
+          path: server/node_modules
+          key: ${{ runner.os }}-server-node-${{ hashFiles('server/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-server-node-
+
+      - name: Install and run server tests
+        working-directory: ./server
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+          npm test
+
+  client-tests:
+    name: Client tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache client node_modules
+        uses: actions/cache@v4
+        with:
+          path: client/node_modules
+          key: ${{ runner.os }}-client-node-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-client-node-
+
+      - name: Install and run client tests
+        working-directory: ./client
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+          npm test
