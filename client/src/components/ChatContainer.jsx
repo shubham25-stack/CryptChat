@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import assets from "../assets/assets";
+import Logo from './Logo'
 import { formatMessageTime } from "../lib/utils";
 import { ChatContext } from "../contexts/ChatContext";
 import { AuthContext } from "../contexts/AuthContext";
@@ -51,7 +52,7 @@ const ChatContainer = () => {
   }, [messages]);
 
   return selectedUser ? (
-    <div className="h-full overflow-hidden relative backdrop-blur-lg flex flex-col">
+    <div className="h-full overflow-hidden relative backdrop-blur-lg flex flex-col chat-main">
       {/* Header */}
       <div className="flex items-center justify-between py-3 px-4 border-b border-orange-500/50">
         {/* Left Side */}
@@ -185,7 +186,7 @@ const ChatContainer = () => {
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center gap-2 text-gray-500 bg-white/10 max-md:hidden h-full w-full">
-      <img src={assets.logo_icon} alt="Logo" className="w-16" />
+      <Logo name="CryptChat" size={64} />
       <p className="text-lg font-medium text-orange-400">
         Chat anytime, anywhere
       </p>

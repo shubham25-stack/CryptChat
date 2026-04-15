@@ -11,3 +11,34 @@
 .your-class {
   background-image: url('/bgImage.jpg');
 }
+
+/* Ensure chat content isn't hidden behind the input on small screens */
+.chat-main {
+  padding-bottom: 88px;
+}
+
+/* Slightly improve default text contrast for headings */
+.logo-text {
+  color: #ff8a3d;
+  font-weight: 700;
+}
+
+@media (max-width: 768px){
+  .chat-main { padding-bottom: 104px; }
+}
+
+/* Fallback utilities for 'max-sm' and 'max-md' classnames used in markup
+   These exist because the project used 'max-*' variants that may not be configured
+   in Tailwind; providing small CSS fallbacks keeps responsiveness working. */
+@media (max-width: 640px) {
+  .max-sm\:flex-col-reverse { flex-direction: column-reverse !important; }
+  .max-sm\:flex-col { flex-direction: column !important; }
+  .max-sm\:mt-10 { margin-top: 2.5rem !important; }
+  .max-sm\:text-sm { font-size: .875rem !important; }
+  .max-sm\:block { display: block !important; }
+}
+
+@media (max-width: 768px) {
+  .max-md\:hidden { display: none !important; }
+  .max-md\:block { display: block !important; }
+}

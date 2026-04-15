@@ -5,5 +5,8 @@
   <rect x="52" y="58" width="16" height="10" rx="5" fill="#181A20"/>
   <path d="M60 50v-8a8 8 0 0 1 16 0v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
   <circle cx="60" cy="65" r="2" fill="#FF6600"/>
-  <text x="60" y="110" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="18" fill="#FF6600">cryptChat</text>
+  <text x="60" y="110" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="18" font-weight="800">
+    <tspan fill="#FFFFFF">Crypt</tspan>
+    <tspan fill="#FF8A3D">Chat</tspan>
+  </text>
 </svg>

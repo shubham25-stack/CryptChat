@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import assets from '../assets/assets';
+import Logo from '../components/Logo'
 import { AuthContext } from '../contexts/AuthContext';
 
 const ProfilePage = () => {
@@ -86,11 +87,17 @@ const ProfilePage = () => {
           </button>
         </form>
 
-        <img
-          className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10'
-          src={authUser?.profilePic || assets.logo_icon}
-          alt=""
-        />
+        {authUser?.profilePic ? (
+          <img
+            className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10'
+            src={authUser.profilePic}
+            alt=""
+          />
+        ) : (
+          <div className='mx-10 max-sm:mt-10'>
+            <Logo name="CryptChat" size={176} showText={false} rounded={true} />
+          </div>
+        )}
       </div>
     </div>
   );
